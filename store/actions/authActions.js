@@ -1,4 +1,4 @@
-export const registerUser = (email, password, fullName) => {
+export const registerUser = (email, password, fullName, phone) => {
   return (useDispatch, useState, { getFirebase, getFirestore }) => {
     const auth = getFirebase().auth();
     const db = getFirestore();
@@ -57,3 +57,9 @@ export const signOut = () => {
       });
   };
 };
+
+
+
+
+
+

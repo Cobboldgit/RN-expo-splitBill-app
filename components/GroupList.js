@@ -1,19 +1,18 @@
 import { View, Text } from "react-native";
 import React from "react";
 import Group from "./Group";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getUserData } from "../store/actions/appActions";
 
-const GroupList = ({ type }) => {
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const GroupList = ({}) => {
+  const {groupsData} = useSelector(state => state.appReducer)
 
-  if (type === "groups") {
-    return data.map((item, index) => {
-      return <Group key={index} />;
-    });
-  } else {
-    return data.splice(0, 2).map((item, index) => {
-      return <Group key={index} />;
-    });
-  }
+  console.log('groupsData', groupsData);
+
+  return groupsData.map((group, index) => {
+    return <Group key={index} group={group} />;
+  });
 };
 
 export default GroupList;

@@ -4,14 +4,16 @@ import { useSelector } from "react-redux";
 import { theme } from "../constants";
 import { useNavigation } from "@react-navigation/native";
 
-const Settle = () => {
+const Settle = ({ data }) => {
   const { darkMode } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate("expenseDetails");
+    navigation.navigate("expenseDetails", { data });
   };
+
+  console.log('settle up =>',data);
 
   return (
     <TouchableOpacity

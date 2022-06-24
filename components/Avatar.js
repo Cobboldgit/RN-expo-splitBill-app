@@ -17,7 +17,11 @@ const Avatar = ({ uri }) => {
         borderRadius: 50,
         marginRight: 10,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        overflow: 'hidden',
+        borderColor: themeMode.pinkLight,
+        borderBottomWidth: 1,
+        borderRightWidth: 1,
       }}
     >
       {uri ? (

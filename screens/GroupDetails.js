@@ -5,9 +5,11 @@ import {
   StatusBar,
   Platform,
   TouchableNativeFeedback,
+  StyleSheet,
+  TextInput,
 } from "react-native";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { theme } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -15,7 +17,10 @@ import SettleUp from "./SettleUp";
 import Balances from "./Balances";
 import Totals from "./Totals";
 import TouchWithFeed from "../components/TouchWithFeed";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import AppModal from "../components/AppModal";
+import { setShowModal } from "../store/actions/appActions";
+import CreateExpense from "./CreateExpense";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -23,6 +28,16 @@ const GroupDetails = () => {
   const navigation = useNavigation();
   const { darkMode } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+  const group = useRoute().params.group;
+  const dispatch = useDispatch();
+
+  const handleAddExpense = () => {
+    dispatch(setShowModal(true));
+  };
+
+  const handleGoToSettings = () => {
+    navigation.navigate("groupSettings", { group });
+  };
 
   return (
     <View
@@ -31,6 +46,10 @@ const GroupDetails = () => {
         flex: 1,
       }}
     >
+      {/* Add expense modal  */}
+      <CreateExpense />
+      {/* Add expense modal end */}
+
       {/* header  */}
       <View
         style={{
@@ -57,17 +76,38 @@ const GroupDetails = () => {
               <Ionicons name="arrow-back" color={themeMode.white} size={24} />
             }
           />
-          <TouchWithFeed
-            flex={{
-              alignItems: "flex-end",
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-            size={{
-              width: 35,
-            }}
-            icon={
-              <Ionicons name="settings" color={themeMode.white} size={24} />
-            }
-          />
+          >
+            <TouchWithFeed
+              onPress={handleAddExpense}
+              flex={{
+                alignItems: "flex-end",
+              }}
+              size={{
+                width: 35,
+              }}
+              icon={
+                <Ionicons name="add-circle" color={themeMode.white} size={24} />
+              }
+            />
+            <TouchWithFeed
+              onPress={handleGoToSettings}
+              flex={{
+                alignItems: "flex-end",
+              }}
+              size={{
+                width: 35,
+              }}
+              icon={
+                <Ionicons name="settings" color={themeMode.white} size={24} />
+              }
+            />
+          </View>
         </View>
         <View
           style={{
@@ -102,7 +142,7 @@ const GroupDetails = () => {
             marginBottom: 10,
           }}
         >
-          Friday night
+          {group?.groupName}
         </Text>
 
         {/* line 2 */}
@@ -256,7 +296,10 @@ const GroupDetails = () => {
           }}
           initialRouteName="login"
         >
-          <Tab.Screen name="settleUp" component={SettleUp} />
+          <Tab.Screen
+            name="settleUp"
+            children={() => <SettleUp group={group} />}
+          />
           <Tab.Screen name="balances" component={Balances} />
           <Tab.Screen name="totals" component={Totals} />
         </Tab.Navigator>

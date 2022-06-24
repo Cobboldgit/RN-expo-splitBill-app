@@ -5,11 +5,12 @@ import Screen from "./routes/screen";
 import { Provider, useSelector } from "react-redux";
 import { store } from "./store/store";
 
+
+
 // Ignore yellow warnings
 LogBox.ignoreLogs([
   "AsyncStorage has been extracted from react-native core and will be removed in a future release",
 ]);
-
 
 
 // renders screens

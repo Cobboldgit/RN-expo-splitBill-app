@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { theme } from "../constants";
 import SettleUpList from "../components/SettleUpList";
 
-const SettleUp = () => {
+const SettleUp = ({group}) => {
   const { darkMode } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
 
@@ -30,7 +30,7 @@ const SettleUp = () => {
       {/* date  end*/}
 
       <ScrollView>
-        <SettleUpList />
+        <SettleUpList group={group} />
       </ScrollView>
     </View>
   );

@@ -18,6 +18,7 @@ import Friends from "../screens/Friends";
 import Notifications from "../screens/Notifications";
 import Splits from "../screens/Splits";
 import { auth } from "../firebase/firebase";
+import GroupSettings from "../screens/GroupSettings";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,8 @@ const Screen = () => {
       (user) => {
         if (user && user.uid) {
           setCurrUser(true);
+          setLoading(false);
+        } else {
           setLoading(false);
         }
       },
@@ -85,6 +88,7 @@ const Screen = () => {
           <Stack.Screen name="friends" component={Friends} />
           <Stack.Screen name="notifications" component={Notifications} />
           <Stack.Screen name="splits" component={Splits} />
+          <Stack.Screen name="groupSettings" component={GroupSettings} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

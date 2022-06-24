@@ -1,16 +1,28 @@
 import { View, Text, StatusBar, ScrollView } from "react-native";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { theme } from "../constants";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import TouchWithFeed from "../components/TouchWithFeed";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import GroupList from "../components/GroupList";
+import {  setShowModal } from "../store/actions/appActions";
+import CreateGroup from "./CreateGroup";
+import { useEffect } from "react";
 
 const Groups = () => {
   const navigation = useNavigation();
-  const { darkMode } = useSelector((state) => state.appReducer);
+  const dispatch = useDispatch();
+
+  const { darkMode, groupsData, } = useSelector((state) => state.appReducer);
+
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+
+
+  const handleAddButtonPress = () => {
+    dispatch(setShowModal(true));
+  };
+
 
   return (
     <View
@@ -19,6 +31,9 @@ const Groups = () => {
         backgroundColor: themeMode.blueBlack,
       }}
     >
+      {/* Modal  */}
+      <CreateGroup />
+
       {/* header  */}
       <View
         style={{
@@ -48,6 +63,7 @@ const Groups = () => {
             }}
           >
             <TouchWithFeed
+              onPress={handleAddButtonPress}
               flex={{
                 alignItems: "flex-end",
               }}
@@ -101,7 +117,7 @@ const Groups = () => {
             paddingHorizontal: 16,
           }}
         >
-          <GroupList type={"groups"} />
+          <GroupList/>
         </View>
         {/* groups end */}
       </ScrollView>

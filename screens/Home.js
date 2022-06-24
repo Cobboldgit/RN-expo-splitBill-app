@@ -6,9 +6,10 @@ import {
   StatusBar,
   TouchableNativeFeedback,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { theme } from "../constants";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Avatar from "../components/Avatar";
@@ -19,11 +20,34 @@ import Header from "../components/Header";
 import GroupList from "../components/GroupList";
 import FriendsList from "../components/FriendsList";
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import { useCallback } from "react";
+import { getAllGroups, getUserData, wait } from "../store/actions/appActions";
+import { useState } from "react";
+import HomeGroup from "../components/HomeGroup";
 
 const Home = () => {
   const navigation = useNavigation();
-  const { darkMode } = useSelector((state) => state.appReducer);
+  const dispatch = useDispatch();
+  const { darkMode, userData } = useSelector(
+    (state) => state.appReducer
+  );
+
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(4000).then(() => {
+      setRefreshing(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    dispatch(getUserData());
+    dispatch(getAllGroups());
+  }, [refreshing]);
 
   const gotoGroups = () => {
     navigation.navigate("groups");
@@ -38,8 +62,8 @@ const Home = () => {
   };
 
   const handleBellPress = () => {
-    navigation.navigate('notifications')
-  }
+    navigation.navigate("notifications");
+  };
 
   return (
     <View
@@ -50,7 +74,21 @@ const Home = () => {
         paddingHorizontal: 16,
       }}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={themeMode.blueLight}
+            colors={[
+              themeMode.pinkLight,
+              themeMode.pinkLighter,
+              themeMode.pinkLightest,
+            ]}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      >
         {/* header  */}
         <View
           style={{
@@ -68,7 +106,7 @@ const Home = () => {
               height: "100%",
             }}
           >
-            <Avatar />
+            <Avatar uri={userData?.photoURL} />
             <Text
               style={{
                 fontFamily: "Inter_400Regular",
@@ -76,7 +114,7 @@ const Home = () => {
                 color: themeMode.pinkLight,
               }}
             >
-              Hi Raymond
+              Hi {userData?.displayName?.split(" ")[0]}
             </Text>
           </View>
           <NotificationBell onPress={handleBellPress} />
@@ -183,7 +221,7 @@ const Home = () => {
 
         {/* Groups  */}
         <Header title={"Groups"} onPress={gotoGroups} />
-        <GroupList />
+            <GroupList/>
         {/* Groups end */}
 
         {/* friends  */}

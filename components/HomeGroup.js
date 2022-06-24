@@ -4,13 +4,13 @@ import { useSelector } from "react-redux";
 import { theme } from "../constants";
 import { useNavigation } from "@react-navigation/native";
 
-const Group = ({group}) => {
+const HomeGroup = ({group}) => {
   const { darkMode } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate("groupDetails", {group});
+    navigation.navigate("groupDetails");
   };
 
   return (
@@ -39,7 +39,7 @@ const Group = ({group}) => {
             color: themeMode.white,
           }}
         >
-          {group?.groupName}
+          Family trip
         </Text>
         <Text
           style={{
@@ -55,4 +55,4 @@ const Group = ({group}) => {
   );
 };
 
-export default Group;
+export default HomeGroup;
