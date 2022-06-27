@@ -7,6 +7,7 @@ import {
   TouchableNativeFeedback,
   StyleSheet,
   TextInput,
+  Image,
 } from "react-native";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -109,7 +110,7 @@ const GroupDetails = () => {
             />
           </View>
         </View>
-        <View
+        <TouchableOpacity
           style={{
             borderRadius: 20,
             borderWidth: 8,
@@ -121,8 +122,20 @@ const GroupDetails = () => {
             top: 100,
             zIndex: 1,
             left: 60,
+            overflow: 'hidden',
+            justifyContent: "center",
+            alignItems: "center"
           }}
-        ></View>
+        >
+          <Image
+            resizeMode='cover'
+            source={{ uri: group?.photoURL }}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+          />
+        </TouchableOpacity>
       </View>
       {/* header end  */}
 

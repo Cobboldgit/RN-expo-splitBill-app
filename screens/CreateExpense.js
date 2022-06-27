@@ -35,7 +35,7 @@ const CreateExpense = () => {
   };
 
   return (
-    <AppModal>
+    <AppModal animationType={'none'}>
       <View
         style={{
           flex: 1,

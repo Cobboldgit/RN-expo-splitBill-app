@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowModal } from "../store/actions/appActions";
 
-const AppModal = ({ children }) => {
+const AppModal = ({ children, animationType }) => {
   const dispatch = useDispatch();
   const { modalVisible } = useSelector((state) => state.appReducer);
 
@@ -14,7 +14,7 @@ const AppModal = ({ children }) => {
   return (
     <Modal
       onRequestClose={handleCloseButtonPress}
-      animationType="slide"
+      animationType={animationType || 'slide'}
       transparent={true}
       visible={modalVisible}
     >
