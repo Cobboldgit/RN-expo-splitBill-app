@@ -13,8 +13,6 @@ const Settle = ({ data }) => {
     navigation.navigate("expenseDetails", { data });
   };
 
-  console.log('settle up =>',data);
-
   return (
     <TouchableOpacity
       onPress={handlePress}

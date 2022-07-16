@@ -8,7 +8,6 @@ import { getUserData } from "../store/actions/appActions";
 const GroupList = ({}) => {
   const {groupsData} = useSelector(state => state.appReducer)
 
-  console.log('groupsData', groupsData);
 
   return groupsData.map((group, index) => {
     return <Group key={index} group={group} />;

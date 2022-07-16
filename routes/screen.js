@@ -19,6 +19,9 @@ import Notifications from "../screens/Notifications";
 import Splits from "../screens/Splits";
 import { auth } from "../firebase/firebase";
 import GroupSettings from "../screens/GroupSettings";
+import CreateExpense from "../screens/CreateExpense";
+import PaidBy from "../screens/PaidBy";
+import SplitProportion from "../screens/SplitProportion";
 
 const Stack = createNativeStackNavigator();
 
@@ -89,6 +92,9 @@ const Screen = () => {
           <Stack.Screen name="notifications" component={Notifications} />
           <Stack.Screen name="splits" component={Splits} />
           <Stack.Screen name="groupSettings" component={GroupSettings} />
+          <Stack.Screen name="createExpense" component={CreateExpense} />
+          <Stack.Screen name="paidBy" component={PaidBy} />
+          <Stack.Screen name="splitProportion" component={SplitProportion} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

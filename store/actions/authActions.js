@@ -20,7 +20,12 @@ export const registerUser = (email, password, fullName, phone) => {
                 email: email,
                 photoUrl: "",
               })
-              .then(() => {})
+              .then(() => {
+                user.updateProfile({
+                  displayName: fullName,
+                  phoneNumber: phone,
+                })
+              })
               .catch((error) => {
                 console.log("db =>", error);
               });

@@ -1,7 +1,25 @@
-yarn add react-native-text-gradient
+<!-- yarn add react-native-text-gradient -->
 
 work on group settings screen
-        add member
-        delete member
-        group color
-        update profile
+        <!-- add member -------------------- -->
+        delete member                  |
+        group color                    |
+        update profile                 |
+                                       |
+
+document was updated successfully
+<!-- when i edit the photoURL the code under do not run -->
+I need to build a loading component
+I need to disable buttons with a request is made
+
+
+check box select all functionality
+push the price
+work on unequally screen
+
+
+price calculator
+
+first participant to be added when a group is created is the person who created the group
+
+target focused screen to submit

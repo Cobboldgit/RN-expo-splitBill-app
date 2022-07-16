@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { useSelector } from "react-redux";
 import { theme } from "../constants";
@@ -29,8 +29,14 @@ const Group = ({group}) => {
           width: 132,
           borderRadius: 10,
           marginRight: 16,
+          overflow: 'hidden'
         }}
-      ></View>
+      >
+        <Image source={{uri: group.photoURL}}  style={{
+          height: '100%',
+          width: "100%",
+        }} />
+      </View>
       <View>
         <Text
           style={{

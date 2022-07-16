@@ -1,12 +1,13 @@
 const initialState = {
   userData: null,
-  groupsData: [],
   darkMode: true,
   modalVisible: false,
-  // selectedImage: null
+  groupsData: [],
+  participants: [],
+  selectedPaidBy: null,
+  split: null,
+  equalSplit: true,
 };
-
-console.log("initialState", initialState.groupsData);
 
 export default (state = initialState, { type, payload }) => {
   switch (type) {
@@ -18,8 +19,16 @@ export default (state = initialState, { type, payload }) => {
       return { ...state, darkMode: payload };
     case "SET_SHOW_MODAL":
       return { ...state, modalVisible: payload };
-    // case "SET_SELECTED_IMAGE":
-    // return { ...state, selectedImage: payload };
+    case "SET_SELECTED_PAID_BY":
+      return { ...state, selectedPaidBy: payload };
+    case "ADD_PARTICIPANT":
+      return { ...state, participants: [...state.participants, payload] };
+    case "CLEAR_PARTICIPANTS":
+      return { ...state, participants: [] };
+    case "SET_SPLIT":
+      return { ...state, split: payload };
+    case "SET_EQUAL_SPLIT":
+      return { ...state, equalSplit: payload };
     default:
       return state;
   }

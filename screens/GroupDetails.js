@@ -19,21 +19,33 @@ import Balances from "./Balances";
 import Totals from "./Totals";
 import TouchWithFeed from "../components/TouchWithFeed";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import AppModal from "../components/AppModal";
-import { setShowModal } from "../store/actions/appActions";
-import CreateExpense from "./CreateExpense";
+import { useEffect } from "react";
+import { setSelectedPaidBy } from "../store/actions/appActions";
 
 const Tab = createMaterialTopTabNavigator();
 
 const GroupDetails = () => {
   const navigation = useNavigation();
-  const { darkMode } = useSelector((state) => state.appReducer);
+  const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const group = useRoute().params.group;
   const dispatch = useDispatch();
 
+  const youAreOwed = group?.expenses?.reduce((a, b) => a + b.amount, 0).toFixed(2);
+
+  console.log("youAreOwed", group?.expenses);
+
+  useEffect(() => {
+    dispatch(
+      setSelectedPaidBy({
+        contactName: userData?.displayName,
+        phoneNumber: userData?.phoneNumber,
+      })
+    );
+  }, []);
+
   const handleAddExpense = () => {
-    dispatch(setShowModal(true));
+    navigation.navigate("createExpense", { group });
   };
 
   const handleGoToSettings = () => {
@@ -47,10 +59,6 @@ const GroupDetails = () => {
         flex: 1,
       }}
     >
-      {/* Add expense modal  */}
-      <CreateExpense />
-      {/* Add expense modal end */}
-
       {/* header  */}
       <View
         style={{
@@ -122,13 +130,13 @@ const GroupDetails = () => {
             top: 100,
             zIndex: 1,
             left: 60,
-            overflow: 'hidden',
+            overflow: "hidden",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Image
-            resizeMode='cover'
+            resizeMode="cover"
             source={{ uri: group?.photoURL }}
             style={{
               height: "100%",
@@ -184,16 +192,7 @@ const GroupDetails = () => {
               marginRight: 5,
             }}
           >
-            Ghc 400.00
-          </Text>
-          <Text
-            style={{
-              color: themeMode.pinkLight,
-              fontSize: 16,
-              fontFamily: "Inter_400Regular",
-            }}
-          >
-            You are owed
+            Ghc {youAreOwed}
           </Text>
         </View>
 
@@ -236,7 +235,7 @@ const GroupDetails = () => {
             marginBottom: 10,
           }}
         >
-          Plus 3 others
+          {/* Plus {group?.expenses} others */}
         </Text>
       </View>
       {/* description end */}

@@ -2,6 +2,44 @@ import * as ImagePicker from "expo-image-picker";
 import { storage } from "../../firebase/firebase";
 import firebase from "../../firebase/firebase";
 
+
+
+
+// ==============================================
+// =              clear participant            =
+//=============================================
+
+export const setEqualSplit = (state) => {
+  return {
+    type: "SET_EQUAL_SPLIT",
+    payload: state,
+  };
+}
+
+
+
+
+
+// ==============================================
+// =              clear participant            =
+//=============================================
+export const clearParticipants = () => {
+  return {
+    type: "CLEAR_PARTICIPANTS",
+  };
+};
+
+// ==============================================
+// =              add participant              =
+//=============================================
+
+export const addParticipant = (data) => {
+  return {
+    type: "ADD_PARTICIPANT",
+    payload: data,
+  };
+};
+
 // ==============================================
 // =              wait for refresh             =
 //==============================================
@@ -33,8 +71,17 @@ export const setShowModal = (state) => {
   };
 };
 
+// ==============================================
+// =              select who to pay            =
+//=============================================
+export const setSelectedPaidBy = (contact) => {
+  return {
+    type: "SET_SELECTED_PAID_BY",
+    payload: contact,
+  };
+};
+
 export const setSelectedImage = (url) => {
-  console.log("url", url);
   return {
     type: "SET_SHOW_MODAL",
     payload: url,
@@ -118,6 +165,20 @@ export const uploadImage = async (file, path, fName) => {
 };
 
 // ==============================================
+// =              check if member exist         =
+//==============================================
+
+export const checkIfMemberExist = (data) => {
+  return (dispatch, useState, { getFirestore, getFirebase }) => {
+    const participants = useState().appReducer.groupsData[0].participants;
+
+    const result = participants.find((p) => p.phoneNumber === data.phoneNumber);
+
+    return result;
+  };
+};
+
+// ==============================================
 // =              create new group             =
 //==============================================
 
@@ -149,6 +210,36 @@ export const createNewGroup = (data) => {
 };
 
 // ==============================================
+// =              edit group                   =
+//=============================================
+
+export const editGroup = (data) => {
+  return (dispatch, useState, { getFirestore, getFirebase }) => {
+    const user = getFirebase().auth().currentUser;
+    const db = getFirestore();
+
+    const { newGroupData, participants, groupId, photoURL } = data;
+
+    const dbRef = db.collection("users").doc(user.uid);
+
+    dbRef
+      .collection("groups")
+      .doc(groupId)
+      .update({
+        groupName: newGroupData.groupName,
+        photoURL: photoURL,
+        participants: getFirestore().FieldValue.arrayUnion(...participants),
+      })
+      .then((result) => {
+        alert("done");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
+
+// ==============================================
 // =              add expense                  =
 //=============================================
 
@@ -159,7 +250,7 @@ export const createExpense = (data) => {
 
     const expenseData = {
       ...data,
-      createdAt: Date.now,
+      createdAt: Date.now(),
       createdBy: {
         email: user.email,
         uid: user.uid,
@@ -171,9 +262,10 @@ export const createExpense = (data) => {
 
     const dbRef = db.collection("users").doc(user.uid);
 
+
     dbRef
       .collection("groups")
-      .doc()
+      .doc(expenseData.groupId)
       .update({
         expenses: firebase.firestore.FieldValue.arrayUnion(expenseData),
       });
@@ -195,7 +287,6 @@ export const getUserData = () => {
 
     dbRef.onSnapshot(
       (querySnapshot) => {
-        console.log("querySnapshot", querySnapshot.data());
         useDispatch({
           type: "GET_USER_DATA",
           payload: querySnapshot.data(),

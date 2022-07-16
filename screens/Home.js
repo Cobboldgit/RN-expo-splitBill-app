@@ -25,6 +25,7 @@ import { useCallback } from "react";
 import { getAllGroups, getUserData, wait } from "../store/actions/appActions";
 import { useState } from "react";
 import HomeGroup from "../components/HomeGroup";
+import { auth } from "../firebase/firebase";
 
 const Home = () => {
   const navigation = useNavigation();
