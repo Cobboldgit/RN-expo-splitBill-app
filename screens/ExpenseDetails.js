@@ -13,15 +13,30 @@ import { theme } from "../constants";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import TouchWithFeed from "../components/TouchWithFeed";
 import OweDraw from "../components/OweDraw";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import Chat from "../components/Chat";
 
 const ExpenseDetails = () => {
   const navigation = useNavigation();
 
-  const { darkMode } = useSelector((state) => state.appReducer);
+  const { data } = useRoute().params;
+  const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+
+  const amountYouPaid = parseFloat(data?.amount).toFixed(2);
+
+  const paidBy =
+    data?.paidBy.phoneNumber === userData?.phoneNumber
+      ? "You"
+      : data?.paidBy.contactName;
+
+  const rawDate = data?.createdAt;
+  const convertedDate = new Date(rawDate).toLocaleString();
+  const dateArray = convertedDate.split(" ");
+  const month = dateArray[1];
+  const day = dateArray[2];
+  const year = dateArray[4];
 
   return (
     <View
@@ -74,7 +89,7 @@ const ExpenseDetails = () => {
               }}
               size={{ width: 35 }}
               icon={
-                <Ionicons name='trash-bin' color={themeMode.white} size={24} />
+                <Ionicons name="trash-bin" color={themeMode.white} size={24} />
               }
             />
             <TouchWithFeed
@@ -83,7 +98,7 @@ const ExpenseDetails = () => {
               }}
               size={{ width: 35 }}
               icon={
-                <MaterialIcons name='edit' color={themeMode.white} size={24} />
+                <MaterialIcons name="edit" color={themeMode.white} size={24} />
               }
             />
           </View>
@@ -126,7 +141,7 @@ const ExpenseDetails = () => {
               marginBottom: 5,
             }}
           >
-            Bar
+            {data?.description}
           </Text>
           <Text
             style={{
@@ -136,7 +151,7 @@ const ExpenseDetails = () => {
               color: themeMode.white,
             }}
           >
-            Ghc 400.00
+            Ghc {amountYouPaid}
           </Text>
           <Text
             style={{
@@ -145,9 +160,9 @@ const ExpenseDetails = () => {
               color: themeMode.blueLighter,
             }}
           >
-            Added by you on 1 June 2022
+            Added by {paidBy} on {day} {month} {year}
           </Text>
-          <Text
+          {/* <Text
             style={{
               fontSize: 16,
               fontFamily: "Inter_400Regular",
@@ -155,7 +170,7 @@ const ExpenseDetails = () => {
             }}
           >
             Updated by you on 1 June 2022
-          </Text>
+          </Text> */}
         </View>
         {/* description end  */}
 
@@ -166,7 +181,9 @@ const ExpenseDetails = () => {
             marginBottom: 30,
           }}
         >
-          <OweDraw />
+
+          {/* owe graph  */}
+          <OweDraw data={data}/>
         </View>
         {/* chart end */}
 
@@ -182,6 +199,8 @@ const ExpenseDetails = () => {
           >
             Comments
           </Text>
+
+          {/* chat  */}
           <Chat />
         </View>
         {/* comment end */}

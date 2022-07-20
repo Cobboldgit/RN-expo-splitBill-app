@@ -2,9 +2,6 @@ import * as ImagePicker from "expo-image-picker";
 import { storage } from "../../firebase/firebase";
 import firebase from "../../firebase/firebase";
 
-
-
-
 // ==============================================
 // =              clear participant            =
 //=============================================
@@ -14,11 +11,14 @@ export const setEqualSplit = (state) => {
     type: "SET_EQUAL_SPLIT",
     payload: state,
   };
-}
+};
 
-
-
-
+export const updateSplit = (data) => {
+  return {
+    type: "SET_SPLIT",
+    payload: data,
+  };
+};
 
 // ==============================================
 // =              clear participant            =
@@ -186,11 +186,17 @@ export const createNewGroup = (data) => {
   return (dispatch, useState, { getFirestore, getFirebase }) => {
     const user = getFirebase().auth().currentUser;
     const db = getFirestore();
+    const userData = useState().appReducer.userData;
 
     let groupData = {
       ...data,
       createdAt: getFirestore().FieldValue.serverTimestamp(),
-      participants: [],
+      participants: [
+        {
+          contactName: userData.displayName,
+          phoneNumber: userData.phoneNumber
+        }
+      ],
       splits: [],
       expenses: [],
       color: "",
@@ -262,7 +268,6 @@ export const createExpense = (data) => {
 
     const dbRef = db.collection("users").doc(user.uid);
 
-
     dbRef
       .collection("groups")
       .doc(expenseData.groupId)
@@ -314,7 +319,7 @@ export const getAllGroups = () => {
 
     dbRef
       .collection("groups")
-      .orderBy("createdAt", "desc")
+      .orderBy("createdAt", 'asc')
       .onSnapshot(
         (d) => {
           const data = [];

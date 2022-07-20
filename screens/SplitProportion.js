@@ -10,7 +10,7 @@ import Unequally from "./Unequally";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 import { useState } from "react";
-import { setEqualSplit } from "../store/actions/appActions";
+import { setEqualSplit, updateSplit } from "../store/actions/appActions";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -21,11 +21,12 @@ const SplitProportion = ({}) => {
 
   const dispatch = useDispatch();
 
-  const { darkMode, userData, split } = useSelector(
+  const { darkMode, userData, } = useSelector(
     (state) => state.appReducer
   );
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
 
+    
   const handleFocusedRoute = (routeName) => {
     setFocusedScreen(routeName);
   };

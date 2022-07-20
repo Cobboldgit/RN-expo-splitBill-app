@@ -6,10 +6,10 @@ import { Provider, useSelector } from "react-redux";
 import { store } from "./store/store";
 
 
-
 // Ignore yellow warnings
 LogBox.ignoreLogs([
   "AsyncStorage has been extracted from react-native core and will be removed in a future release",
+  "VirtualizedLists should never be nested inside plain ScrollViews with the same orientation because it can break windowing and other functionality - use another VirtualizedList-backed container instead."
 ]);
 
 
@@ -33,3 +33,5 @@ export default function App() {
     </Provider>
   );
 }
+
+

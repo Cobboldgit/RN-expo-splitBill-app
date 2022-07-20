@@ -19,8 +19,8 @@ import Balances from "./Balances";
 import Totals from "./Totals";
 import TouchWithFeed from "../components/TouchWithFeed";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useEffect } from "react";
-import { setSelectedPaidBy } from "../store/actions/appActions";
+import { useEffect, useState } from "react";
+import { getAllGroups, setSelectedPaidBy } from "../store/actions/appActions";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -30,10 +30,28 @@ const GroupDetails = () => {
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const group = useRoute().params.group;
   const dispatch = useDispatch();
+  const [numberOfPeopleWhoOwe, setNumberOfPeopleWhoOwe] = useState(0);
 
-  const youAreOwed = group?.expenses?.reduce((a, b) => a + b.amount, 0).toFixed(2);
+  const youAreOwed = group?.expenses
+    ?.reduce((a, b) => a + b.amount, 0)
+    .toFixed(2);
 
-  console.log("youAreOwed", group?.expenses);
+  const whoOweYou = group?.expenses.map((expense) => {
+    let length = 0;
+    let amount, name;
+    if (expense.equal === true) {
+      amount = parseFloat(expense.amountPerPerson).toFixed(2);
+      name = expense.paidFor[0].contactName;
+    } else {
+      amount = expense.paidFor[0].amount;
+      name = expense.paidFor[0].contactName;
+    }
+
+    length = length + expense.paidFor.length;
+    return { name, amount, length };
+  });
+
+  console.log(whoOweYou[0]?.length);
 
   useEffect(() => {
     dispatch(
@@ -197,33 +215,35 @@ const GroupDetails = () => {
         </View>
 
         {/* line 3 */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: 10,
-          }}
-        >
-          <Text
+        {whoOweYou.length > 0 && (
+          <View
             style={{
-              color: themeMode.white,
-              fontSize: 16,
-              fontFamily: "Inter_400Regular",
-              marginRight: 5,
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 10,
             }}
           >
-            Augustine owes you
-          </Text>
-          <Text
-            style={{
-              color: themeMode.pinkLight,
-              fontFamily: "Inter_400Regular",
-              fontSize: 16,
-            }}
-          >
-            Ghc 20.00
-          </Text>
-        </View>
+            <Text
+              style={{
+                color: themeMode.white,
+                fontSize: 16,
+                fontFamily: "Inter_400Regular",
+                marginRight: 5,
+              }}
+            >
+              {whoOweYou[0]?.name} owes
+            </Text>
+            <Text
+              style={{
+                color: themeMode.pinkLight,
+                fontFamily: "Inter_400Regular",
+                fontSize: 16,
+              }}
+            >
+              Ghc {whoOweYou[0]?.amount}
+            </Text>
+          </View>
+        )}
 
         {/* line 4 */}
         <Text
@@ -235,7 +255,7 @@ const GroupDetails = () => {
             marginBottom: 10,
           }}
         >
-          {/* Plus {group?.expenses} others */}
+          Plus {numberOfPeopleWhoOwe} others
         </Text>
       </View>
       {/* description end */}

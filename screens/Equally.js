@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import PartticipantCard from "../components/PartticipantCard";
 import { useNavigation } from "@react-navigation/native";
+import { updateSplit } from "../store/actions/appActions";
 
 const Equally = ({ amount, groupData, handleFocusedRoute }) => {
   const dispatch = useDispatch();
@@ -25,23 +26,9 @@ const Equally = ({ amount, groupData, handleFocusedRoute }) => {
     }
   }, [navigation.isFocused()]);
 
-  // send data to split state in reducer
-  useEffect(() => {
-    dispatch({
-      type: "SET_SPLIT",
-      payload: {
-        amountPerPerson: split,
-        members: selectedMembers,
-        groupId: groupData.id,
-        numberOfPerson: selectedMembers.length,
-      },
-    });
-  }, [split, selectedMembers]);
-
-
   // select all members in group
   useEffect(() => {
-    (async () => {
+    setTimeout(() => {
       let newArr = [];
       groupData?.participants.forEach((item) => {
         newArr.push(item);
@@ -51,8 +38,19 @@ const Equally = ({ amount, groupData, handleFocusedRoute }) => {
       setSelectedAll(true);
 
       setSplit(newArr.length > 0 ? amount / newArr.length : 0);
-    })();
+    }, 1000);
   }, []);
+
+  // send data to split state in reducer
+  useEffect(() => {
+    let data = {
+      amountPerPerson: split,
+      paidFor: selectedMembers,
+      groupId: groupData.id,
+      numberOfPerson: selectedMembers.length,
+    };
+    dispatch(updateSplit(data));
+  }, [split, selectedMembers]);
 
   // handles check box
   const handleSelectedItem = (item, isChecked) => {

@@ -4,9 +4,17 @@ import { useSelector } from "react-redux";
 import { theme } from "../constants";
 import OweDrawList from "./OweDrawList";
 
-const OweDraw = () => {
-  const { darkMode } = useSelector((state) => state.appReducer);
+const OweDraw = ({data}) => {
+  const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+
+
+  const amountYouPaid = parseFloat(data?.amount).toFixed(2);
+
+  const paidBy =
+    data?.paidBy.phoneNumber === userData?.phoneNumber
+      ? "You"
+      : data?.paidBy.contactName;
 
   return (
     <View
@@ -43,10 +51,10 @@ const OweDraw = () => {
             marginBottom: 20
           }}
         >
-          You paid Ghc 100.00
+          {paidBy} paid Ghc {amountYouPaid}
         </Text>
       </View>
-      <OweDrawList themeMode={themeMode}/>
+      <OweDrawList themeMode={themeMode} data={data}/>
     </View>
   );
 };

@@ -23,3 +23,21 @@ price calculator
 first participant to be added when a group is created is the person who created the group
 
 target focused screen to submit
+
+
+split state (inside reducers) clears when i navigate to splitProportion screen
+                causes
+                ------
+                1. the useEffect in createExpense screen is called again when i navigate to splitProportion screen
+                
+                possible solutions
+                ------------------
+                1. avoid the useEffect in createExpense from running again
+                2. remove the useEffect and put it in the button that navigates to splitProportion or put it in the save button
+                3.
+
+
+change expenses data structure
+
+Group details description
+

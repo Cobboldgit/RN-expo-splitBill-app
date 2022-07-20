@@ -5,6 +5,7 @@ import { theme } from "../constants";
 import PartticipantCard from "../components/PartticipantCard";
 import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { updateSplit } from "../store/actions/appActions";
 
 const Unequally = ({ amount, groupData, handleFocusedRoute }) => {
   const { darkMode, userData } = useSelector((state) => state.appReducer);
@@ -26,37 +27,34 @@ const Unequally = ({ amount, groupData, handleFocusedRoute }) => {
   }, [navigation.isFocused()]);
 
   // get members with amount
-  useEffect(() => {
-    let members = [];
-    for (let i = 0; i < groupData.participants.length; i++) {
-      for (let j = 0; j < split.length; j++) {
-        if (groupData.participants[i].id === split[j].id) {
-          members.push(groupData.participants[i]);
-        }
-      }
-    }
-    setSelectedMembers(members);
-  }, [split]);
+  // useEffect(() => {
+  //   let members = [];
+  //   for (let i = 0; i < groupData.participants.length; i++) {
+  //     for (let j = 0; j < split.length; j++) {
+  //       if (groupData.participants[i].id === split[j].id) {
+  //         members.push(groupData.participants[i]);
+  //       }
+  //     }
+  //   }
+  //   setSelectedMembers(members);
+  // }, [split]);
 
   // send data to reducer
   useEffect(() => {
-    dispatch({
-      type: "SET_SPLIT",
-      payload: {
-        members: selectedMembers,
-        groupId: groupData.id,
-        numberOfPerson: selectedMembers.length,
-        amountPerPerson: split,
-      },
-    });
+    let data = {
+      paidFor: split,
+      groupId: groupData.id,
+      numberOfPerson: split.length,
+    };
+    dispatch(updateSplit(data));
   }, [split, selectedMembers]);
 
   // get input amount
-  const handleSplit = (value, index, id) => {
+  const handleSplit = (value, index, item) => {
     const number = parseFloat(value);
 
     const data = {
-      id: id,
+      ...item,
       amount: number,
     };
 
@@ -65,13 +63,15 @@ const Unequally = ({ amount, groupData, handleFocusedRoute }) => {
       currData.amount = number;
       setSplit([
         ...split.slice(0, index),
-        { id: currData.id, amount: currData.amount },
+        { id: currData.id, amount: currData.amount, contactName: currData.contactName, phoneNumber: currData.phoneNumber },
         ...split.slice(index + 1),
       ]);
     } else {
       setSplit([...split, data]);
     }
   };
+
+  // console.log(split);
 
   return (
     <View
@@ -202,7 +202,7 @@ const ListMembers = ({ item, themeMode, handleSplit, index }) => {
           onChangeText={(text) => setValue(text)}
           onBlur={() => {
             if (value != "") {
-              handleSplit(value, index, item.id);
+              handleSplit(value, index, item);
             }
           }}
           placeholder="0.00"

@@ -13,7 +13,7 @@ import { theme } from "../constants";
 import { useDispatch, useSelector } from "react-redux";
 import ListContact from "../components/ListContact";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
-import useContacts from "../hooks/useHooks";
+import {useContacts} from "../hooks";
 import CreateContact from "./CreateContact";
 import TouchWithFeed from "../components/TouchWithFeed";
 import ListSelectedContacts from "../components/ListSelectedContacts";

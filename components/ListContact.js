@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, FlatList, } from "react-native";
 import React from "react";
-import useContacts from "../hooks/useHooks";
+import {useContacts} from "../hooks";
 import { MaterialIcons } from "@expo/vector-icons";
 import theme from "../constants/theme";
 import { useSelector } from "react-redux";

@@ -14,7 +14,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { theme } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import TouchWithFeed from "../components/TouchWithFeed";
-import { createExpense, setShowModal } from "../store/actions/appActions";
+import {
+  createExpense,
+  setShowModal,
+  updateSplit,
+} from "../store/actions/appActions";
 import { useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
@@ -38,20 +42,18 @@ const CreateExpense = () => {
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
 
   useEffect(() => {
+    let data = {
+      amountPerPerson: amount / group.participants.length,
+      paidFor: group.participants,
+      groupId: group.id,
+      numberOfPerson: group.participants.length,
+    };
     if (amount != 0) {
-      dispatch({
-        type: "SET_SPLIT",
-        payload: {
-          amountPerPerson: amount / group.participants.length,
-          members: group.participants,
-          groupId: group.id,
-          numberOfPerson: group.participants.length,
-        },
-      });
+      dispatch(updateSplit(data));
     }
   }, [amount]);
 
-  console.log("split", equalSplit);
+  // console.log("split", equalSplit);
 
   // paid by
   const handlePaidBy = () => {
@@ -66,23 +68,21 @@ const CreateExpense = () => {
     });
   };
 
-
   // submit
   const handleSubmit = () => {
     let data = {
       description,
       amount: +amount,
       paidBy: selectedPaidBy,
-      paidFor: split?.members,
       equal: equalSplit,
-      groupId: split?.groupId,
+      ...split,
     };
 
     dispatch(createExpense(data));
-    navigation.goBack()
+    navigation.goBack();
   };
 
-  // console.log(split);
+  console.log("create expense split =>", split);
 
   const paidByText =
     selectedPaidBy?.phoneNumber === userData?.phoneNumber

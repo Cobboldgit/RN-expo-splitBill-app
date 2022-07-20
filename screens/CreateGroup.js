@@ -23,6 +23,7 @@ import { Ionicons } from "@expo/vector-icons";
 import SelectImage from "../components/SelectImage";
 import { Fragment } from "react";
 import { auth, db } from "../firebase/firebase";
+import Loader from "../components/Loader";
 
 const CreateGroup = () => {
   const [name, setName] = useState("");
@@ -31,6 +32,7 @@ const CreateGroup = () => {
   const dispatch = useDispatch();
   const { darkMode } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+  const [loading, setLoading] = useState(false)
 
   const handleCloseButtonPress = () => {
     dispatch(setShowModal(false));
@@ -45,6 +47,7 @@ const CreateGroup = () => {
   };
 
   const handleSave = async () => {
+    setLoading(true)
     const user = auth.currentUser;
     let photoURL;
 
@@ -71,10 +74,13 @@ const CreateGroup = () => {
       dispatch(createNewGroup(groupData)),
       dispatch(setShowModal(false)),
     ]);
+
+    setLoading(false)
   };
 
   return (
     <Fragment>
+      {/* <Loader state={loading}/> */}
       <Modal
         onRequestClose={handleSelectImage}
         visible={showSelectImage}

@@ -26,13 +26,12 @@ import { getAllGroups, getUserData, wait } from "../store/actions/appActions";
 import { useState } from "react";
 import HomeGroup from "../components/HomeGroup";
 import { auth } from "../firebase/firebase";
+import Loader from "../components/Loader";
 
 const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { darkMode, userData } = useSelector(
-    (state) => state.appReducer
-  );
+  const { darkMode, userData } = useSelector((state) => state.appReducer);
 
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
 
@@ -75,6 +74,7 @@ const Home = () => {
         paddingHorizontal: 16,
       }}
     >
+      {/* <Loader state={false}/> */}
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -222,7 +222,7 @@ const Home = () => {
 
         {/* Groups  */}
         <Header title={"Groups"} onPress={gotoGroups} />
-            <GroupList/>
+        <GroupList />
         {/* Groups end */}
 
         {/* friends  */}

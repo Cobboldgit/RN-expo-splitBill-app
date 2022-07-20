@@ -1,3 +1,4 @@
 export default {
-    tabBarAdd: require("../assets/icons/tabadd.png")
+    tabBarAdd: require("../assets/icons/tabadd.png"),
+    loader: require("../assets/icons/loadingIcon.json"),
 }

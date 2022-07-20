@@ -5,13 +5,26 @@ import { theme } from "../constants";
 import { useNavigation } from "@react-navigation/native";
 
 const Settle = ({ data }) => {
-  const { darkMode } = useSelector((state) => state.appReducer);
+  const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const navigation = useNavigation();
 
   const handlePress = () => {
     navigation.navigate("expenseDetails", { data });
   };
+
+  const amountYouPaid = parseFloat(data?.amount).toFixed(2);
+
+  const paidBy =
+    data?.paidBy.phoneNumber === userData?.phoneNumber
+      ? "You"
+      : data?.paidBy.contactName;
+
+  const rawDate = data?.createdAt;
+  const convertedDate = new Date(rawDate).toLocaleString()
+  const dateArray = convertedDate.split(" ");
+  const month = dateArray[1];
+  const day = dateArray[2];
 
   return (
     <TouchableOpacity
@@ -35,7 +48,7 @@ const Settle = ({ data }) => {
             fontSize: 16,
           }}
         >
-          Jun
+          {month}
         </Text>
         <Text
           style={{
@@ -44,7 +57,7 @@ const Settle = ({ data }) => {
             fontSize: 24,
           }}
         >
-          01
+          {day}
         </Text>
       </View>
       <View
@@ -63,7 +76,7 @@ const Settle = ({ data }) => {
             color: themeMode.white,
           }}
         >
-          Bar
+          {data?.description}
         </Text>
         <Text
           style={{
@@ -71,7 +84,7 @@ const Settle = ({ data }) => {
             color: themeMode.white,
           }}
         >
-          You paid Ghc 400.00
+          {`${paidBy} paid Ghc ${amountYouPaid}`}
         </Text>
       </View>
     </TouchableOpacity>

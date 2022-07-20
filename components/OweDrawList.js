@@ -1,14 +1,32 @@
 import { View, Text } from "react-native";
 import React from "react";
+import {useIsArray} from "../hooks";
+import { useSelector } from "react-redux";
 
-const OweDrawList = ({themeMode}) => {
-  const data = [1, 2, 3, 4, 4, 5, 5, 56, 6];
-  return data.map((tiem, index) => {
-    return <RenderOweDrawList key={index} themeMode={themeMode} />;
+const OweDrawList = ({ themeMode, data }) => {
+  const datas = [1, 2, 3, 4, 4, 5, 5, 56, 6];
+  console.log(data);
+  return data?.paidFor.map((item, index) => {
+    return (
+      <RenderOweDrawList
+        key={index}
+        index={index}
+        themeMode={themeMode}
+        item={item}
+        amountPerPerson={data?.amountPerPerson || data?.paidFor}
+      />
+    );
   });
 };
 
-const RenderOweDrawList = ({ item, themeMode }) => {
+const RenderOweDrawList = ({ item, themeMode, index, amountPerPerson }) => {
+
+  const { userData } = useSelector((state) => state.appReducer);
+
+  const amountYouOwe = useIsArray(amountPerPerson)
+    ? parseFloat(amountPerPerson[index]?.amount).toFixed(2)
+    : parseFloat(amountPerPerson).toFixed(2);
+
   return (
     <View
       style={{
@@ -32,7 +50,7 @@ const RenderOweDrawList = ({ item, themeMode }) => {
           fontFamily: "Inter_400Regular",
         }}
       >
-        Augustine owes Ghc 20.00
+        {item?.contactName === userData?.displayName ? 'You' : item?.contactName} owes Ghc {amountYouOwe}
       </Text>
     </View>
   );
