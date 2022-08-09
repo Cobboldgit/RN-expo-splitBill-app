@@ -53,7 +53,6 @@ const CreateExpense = () => {
     }
   }, [amount]);
 
-  // console.log("split", equalSplit);
 
   // paid by
   const handlePaidBy = () => {
@@ -81,8 +80,6 @@ const CreateExpense = () => {
     dispatch(createExpense(data));
     navigation.goBack();
   };
-
-  console.log("create expense split =>", split);
 
   const paidByText =
     selectedPaidBy?.phoneNumber === userData?.phoneNumber

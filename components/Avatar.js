@@ -4,15 +4,15 @@ import { useSelector } from "react-redux";
 import { theme } from "../constants";
 import {Ionicons} from "@expo/vector-icons"
 
-const Avatar = ({ uri }) => {
+const Avatar = ({ uri, height, width }) => {
   const { darkMode } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
 
   return (
     <View
       style={{
-        height: 50,
-        width: 50,
+        height: height || 50,
+        width: width || 50,
         backgroundColor: themeMode.blueLight,
         borderRadius: 50,
         marginRight: 10,

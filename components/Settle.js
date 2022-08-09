@@ -4,13 +4,13 @@ import { useSelector } from "react-redux";
 import { theme } from "../constants";
 import { useNavigation } from "@react-navigation/native";
 
-const Settle = ({ data }) => {
+const Settle = ({ data, index }) => {
   const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate("expenseDetails", { data });
+    navigation.navigate("expenseDetails", { data, index });
   };
 
   const amountYouPaid = parseFloat(data?.amount).toFixed(2);

@@ -71,8 +71,6 @@ const Unequally = ({ amount, groupData, handleFocusedRoute }) => {
     }
   };
 
-  // console.log(split);
-
   return (
     <View
       style={{

@@ -51,7 +51,6 @@ const GroupDetails = () => {
     return { name, amount, length };
   });
 
-  console.log(whoOweYou[0]?.length);
 
   useEffect(() => {
     dispatch(

@@ -4,7 +4,7 @@ import Settle from "./Settle";
 
 const SettleUpList = ({ group }) => {
   return group?.expenses.slice(0).reverse().map((data, index) => {
-    return <Settle key={index} data={data} />;
+    return <Settle key={index} data={data} index={index} />;
   });
 };
 

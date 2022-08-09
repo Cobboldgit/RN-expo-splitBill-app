@@ -194,8 +194,8 @@ export const createNewGroup = (data) => {
       participants: [
         {
           contactName: userData.displayName,
-          phoneNumber: userData.phoneNumber
-        }
+          phoneNumber: userData.phoneNumber,
+        },
       ],
       splits: [],
       expenses: [],
@@ -257,6 +257,7 @@ export const createExpense = (data) => {
     const expenseData = {
       ...data,
       createdAt: Date.now(),
+      id: randId(20),
       createdBy: {
         email: user.email,
         uid: user.uid,
@@ -267,13 +268,64 @@ export const createExpense = (data) => {
     };
 
     const dbRef = db.collection("users").doc(user.uid);
-
     dbRef
       .collection("groups")
       .doc(expenseData.groupId)
       .update({
         expenses: firebase.firestore.FieldValue.arrayUnion(expenseData),
       });
+  };
+};
+
+// ==============================================
+// =              send a comment               =
+//==============================================
+
+export const sendMessage = (data) => {
+  return (dispatch, useState, { getFirestore, getFirebase }) => {
+    const user = getFirebase().auth().currentUser;
+    const db = getFirestore();
+
+    const dbRef = db.collection("users").doc(user.uid);
+    const groupRef = dbRef.collection("groups").doc(data.groupId);
+    const expenseRef = groupRef.collection("comments").doc(data.roomId);
+
+    expenseRef
+      .update({
+        lastMessage: data,
+        messages: firebase.firestore.FieldValue.arrayUnion(data),
+      })
+      .then(() => {
+        console.log("message sent");
+      });
+  };
+};
+
+export const getComments = (groupId, roomId) => {
+  return (dispatch, useState, { getFirestore, getFirebase }) => {
+    const user = getFirebase().auth().currentUser;
+    const db = getFirestore();
+
+    const dbRef = db.collection("users").doc(user.uid);
+    const groupRef = dbRef.collection("groups").doc(groupId);
+    const commentsRef = groupRef.collection("comments").doc(roomId);
+
+    commentsRef.onSnapshot((snapshot) => {
+      const comments = snapshot.data().messages.map((message) => {
+        return {
+          ...message,
+          createdAt: message.createdAt.toDate(),
+        };
+      });
+
+      dispatch({
+        type: "GET_COMMENTS",
+        payload: {
+          lastMessage: snapshot.data().lastMessage,
+          messages: comments,
+        },
+      });
+    });
   };
 };
 
@@ -319,7 +371,7 @@ export const getAllGroups = () => {
 
     dbRef
       .collection("groups")
-      .orderBy("createdAt", 'asc')
+      .orderBy("createdAt", "asc")
       .onSnapshot(
         (d) => {
           const data = [];

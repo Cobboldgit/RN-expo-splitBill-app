@@ -22,6 +22,8 @@ import GroupSettings from "../screens/GroupSettings";
 import CreateExpense from "../screens/CreateExpense";
 import PaidBy from "../screens/PaidBy";
 import SplitProportion from "../screens/SplitProportion";
+import LetsSplit from "../screens/LetsSplit";
+import Comment from "../screens/Comment";
 
 const Stack = createNativeStackNavigator();
 
@@ -95,6 +97,8 @@ const Screen = () => {
           <Stack.Screen name="createExpense" component={CreateExpense} />
           <Stack.Screen name="paidBy" component={PaidBy} />
           <Stack.Screen name="splitProportion" component={SplitProportion} />
+          <Stack.Screen name="letsSplit" component={LetsSplit} />
+          <Stack.Screen name="comment" component={Comment} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

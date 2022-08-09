@@ -7,6 +7,7 @@ const initialState = {
   selectedPaidBy: null,
   split: null,
   equalSplit: true,
+  commentsData: null
 };
 
 export default (state = initialState, { type, payload }) => {
@@ -29,6 +30,8 @@ export default (state = initialState, { type, payload }) => {
       return { ...state, split: payload };
     case "SET_EQUAL_SPLIT":
       return { ...state, equalSplit: payload };
+    case 'GET_COMMENTS': 
+      return {...state, commentsData: payload}
     default:
       return state;
   }

@@ -215,7 +215,7 @@ const Home = () => {
               fontSize: 16,
             }}
           >
-            Ghc 300.00
+            Ghc 0.00
           </Text>
         </TouchableOpacity>
         {/* previous split end */}

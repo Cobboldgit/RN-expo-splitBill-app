@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 
 const OweDrawList = ({ themeMode, data }) => {
   const datas = [1, 2, 3, 4, 4, 5, 5, 56, 6];
-  console.log(data);
   return data?.paidFor.map((item, index) => {
     return (
       <RenderOweDrawList
@@ -50,7 +49,7 @@ const RenderOweDrawList = ({ item, themeMode, index, amountPerPerson }) => {
           fontFamily: "Inter_400Regular",
         }}
       >
-        {item?.contactName === userData?.displayName ? 'You' : item?.contactName} owes Ghc {amountYouOwe}
+        {item?.contactName === userData?.displayName ? 'You' : item?.contactName} {item?.contactName === userData?.displayName ? 'owe' : 'owes'} Ghc {amountYouOwe}
       </Text>
     </View>
   );

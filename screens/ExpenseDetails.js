@@ -6,9 +6,10 @@ import {
   TouchableNativeFeedback,
   StatusBar,
   ScrollView,
+  Pressable,
 } from "react-native";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { theme } from "../constants";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import TouchWithFeed from "../components/TouchWithFeed";
@@ -16,13 +17,24 @@ import OweDraw from "../components/OweDraw";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import Chat from "../components/Chat";
+import Button3d from "../components/Button3D";
+import { useEffect } from "react";
+import { getComments } from "../store/actions/appActions";
 
 const ExpenseDetails = () => {
   const navigation = useNavigation();
 
-  const { data } = useRoute().params;
+  const dispatch = useDispatch();
+
+  const { data, index } = useRoute().params;
   const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+
+  useEffect(() => {
+    const unsubscribe = dispatch(getComments(data.groupId, data.id));
+
+    return () => unsubscribe;
+  }, []);
 
   const amountYouPaid = parseFloat(data?.amount).toFixed(2);
 
@@ -181,30 +193,69 @@ const ExpenseDetails = () => {
             marginBottom: 30,
           }}
         >
-
           {/* owe graph  */}
-          <OweDraw data={data}/>
+          <OweDraw data={data} />
         </View>
         {/* chart end */}
+      </ScrollView>
 
-        {/* comment */}
-        <View style={{ height: 450 }}>
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0,
+          width: "100%",
+          paddingVertical: 20,
+          paddingHorizontal: 16,
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            navigation.navigate("letsSplit", { data });
+          }}
+          style={({ pressed }) => {
+            return {
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+            };
+          }}
+        >
+          <Button3d text={"Let's split"} />
+        </Pressable>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingVertical: 16,
+          }}
+        >
           <Text
             style={{
-              fontSize: 20,
-              fontFamily: "Inter_900Black",
-              color: themeMode.white,
-              marginHorizontal: 16,
+              fontSize: 16,
+              fontFamily: "Inter_400Regular",
+              color: themeMode.blueLighter,
             }}
           >
-            Comments
+            Do you want to say something?{" "}
           </Text>
 
-          {/* chat  */}
-          <Chat />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("comment", { expenseData: data, index });
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: "Inter_400Regular",
+                color: themeMode.pinkLighter,
+                textDecorationLine: "underline",
+              }}
+            >
+              Comment
+            </Text>
+          </TouchableOpacity>
         </View>
-        {/* comment end */}
-      </ScrollView>
+      </View>
     </View>
   );
 };
