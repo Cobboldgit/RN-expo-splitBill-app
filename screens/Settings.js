@@ -6,6 +6,12 @@ import {
   StatusBar,
   StyleSheet,
   SectionList,
+  Share,
+  Modal,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
 } from "react-native";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,18 +23,39 @@ import {
   MaterialCommunityIcons,
   FontAwesome5,
 } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import RateSystem from "../components/RateSystem";
+import { signOut } from "../store/actions/authActions";
+import ProfilePicture from "./ProfilePicture";
 
 const Settings = () => {
   const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+  const navigation = useNavigation();
+  const [showRateModal, setShowRateModal] = useState(false);
+  const dispatch = useDispatch();
 
+  // features data start
   const features = [
+    {
+      title: "Display",
+      data: [
+        {
+          title: "Theme",
+          icon: <Entypo name="palette" size={24} color={themeMode.white} />,
+          screen: "theme",
+        },
+      ],
+    },
     {
       title: "Preferences",
       data: [
         {
           title: "Passcode",
           icon: <Entypo name="lock" size={24} color={themeMode.white} />,
+          screen: "passcode",
         },
       ],
     },
@@ -59,6 +86,7 @@ const Settings = () => {
               color={themeMode.white}
             />
           ),
+          screen: "faq",
         },
         {
           title: "Contact / Support",
@@ -69,14 +97,30 @@ const Settings = () => {
               color={themeMode.white}
             />
           ),
+          screen: "contactOrSupport",
         },
       ],
     },
   ];
+  // features data end
 
+  // feature component onpress
   const handleFeaturePressed = (title) => {
-    alert(title);
+    navigation.navigate(title);
   };
+  // feature component onpress end
+
+  // rate modal
+  const handleRateModal = () => {
+    setShowRateModal(!showRateModal);
+  };
+  // rate modal end
+
+  // log out
+  const handleLogOut = () => {
+    dispatch(signOut());
+  };
+  // log out end
 
   return (
     <View
@@ -86,6 +130,44 @@ const Settings = () => {
         paddingTop: StatusBar.currentHeight,
       }}
     >
+      <Modal
+        statusBarTranslucent
+        onRequestClose={() => {
+          handleRateModal();
+        }}
+        animationType="slide"
+        transparent={true}
+        visible={showRateModal}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "height" : "padding"}
+          style={{
+            flex: 1,
+          }}
+        >
+          <LinearGradient
+            colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.9)"]}
+            style={{
+              flex: 1,
+              // backgroundColor: `rgba(0,0,0,0.5)`,
+              justifyContent: "flex-end",
+            }}
+          >
+            <LinearGradient
+              colors={[themeMode.pinkLight, themeMode.pinkLighter]}
+              style={{
+                height: Dimensions.get("screen").height / 2,
+                width: "100%",
+                // backgroundColor: themeMode.blueLight,
+                borderTopRightRadius: 20,
+                borderTopLeftRadius: 20,
+              }}
+            >
+              <RateSystem closeModal={handleRateModal} />
+            </LinearGradient>
+          </LinearGradient>
+        </KeyboardAvoidingView>
+      </Modal>
       <View
         style={{
           paddingHorizontal: 16,
@@ -104,11 +186,17 @@ const Settings = () => {
       </View>
       <SectionList
         ListHeaderComponent={RenderHeaderComponent}
-        ListFooterComponent={RenderFooterComponent}
+        ListFooterComponent={() => (
+          <RenderFooterComponent logOut={handleLogOut} />
+        )}
         sections={features}
         keyExtractor={(item, index) => item + index}
         renderItem={({ item }) => (
-          <RenderFeature feature={item} onPress={handleFeaturePressed} />
+          <RenderFeature
+            handleRateModal={handleRateModal}
+            feature={item}
+            onPress={handleFeaturePressed}
+          />
         )}
         renderSectionHeader={({ section: { title } }) => (
           <SectionTitle title={title} themeMode={themeMode} />
@@ -118,42 +206,53 @@ const Settings = () => {
   );
 };
 
+//  Account start
 const RenderHeaderComponent = () => {
   const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+  const navigation = useNavigation();
 
   const handleEdit = () => {};
 
-  const handleCameraPressed = () => {}
+  const handleProfile = () => {
+    navigation.navigate("profile");
+  };
 
   return (
-    <View
-      style={{
+    <Pressable
+      onPress={handleProfile}
+      style={({ pressed }) => ({
         flexDirection: "row",
         alignItems: "center",
         borderBottomColor: themeMode.blueLight,
         borderBottomWidth: StyleSheet.hairlineWidth,
-        paddingBottom: 20,
+        paddingVertical: 20,
         paddingHorizontal: 16,
-        marginTop: 20,
+        marginTop: 10,
         marginBottom: 20,
-      }}
+        backgroundColor: pressed ? themeMode.blueLight : "transparent",
+      })}
     >
-      <TouchableOpacity
-      onPress={handleCameraPressed}
+      <View
         style={{
           flex: 2,
         }}
       >
-        <Avatar height={60} width={60} />
-        <View style={{
-          position: 'absolute',
-          top: 40,
-          right: 10
-        }}>
-          <MaterialCommunityIcons name="camera" size={24} color={themeMode.white} />
+        <Avatar uri={userData?.photoUrl} height={60} width={60} />
+        <View
+          style={{
+            position: "absolute",
+            top: 40,
+            right: 10,
+          }}
+        >
+          <MaterialCommunityIcons
+            name="camera"
+            size={24}
+            color={themeMode.white}
+          />
         </View>
-      </TouchableOpacity>
+      </View>
       <View
         style={{
           flex: 6,
@@ -166,7 +265,7 @@ const RenderHeaderComponent = () => {
             color: themeMode.white,
           }}
         >
-          Augustine Cobbold
+          {userData?.displayName}
         </Text>
         <Text
           style={{
@@ -175,7 +274,7 @@ const RenderHeaderComponent = () => {
             color: themeMode.blueLighter,
           }}
         >
-          augus@gmail.com
+          {userData?.email}
         </Text>
       </View>
       <View
@@ -184,24 +283,26 @@ const RenderHeaderComponent = () => {
           alignItems: "flex-end",
         }}
       >
-        <TouchableOpacity
-          onPress={handleEdit}
+        <View
           style={{
             padding: 5,
           }}
         >
           <FontAwesome5 name="user-edit" size={24} color={themeMode.white} />
-        </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
+//  Account end
 
-const RenderFooterComponent = () => {
+// Logout start
+const RenderFooterComponent = ({ logOut }) => {
   const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   return (
     <TouchableOpacity
+      onPress={logOut}
       style={{
         flexDirection: "row",
         alignItems: "center",
@@ -235,7 +336,9 @@ const RenderFooterComponent = () => {
     </TouchableOpacity>
   );
 };
+// Logout end
 
+// features section title start
 const SectionTitle = ({ title, themeMode }) => {
   return (
     <View
@@ -256,13 +359,42 @@ const SectionTitle = ({ title, themeMode }) => {
     </View>
   );
 };
+// features section title end
 
-const RenderFeature = ({ feature, onPress }) => {
+// features start
+const RenderFeature = ({ feature, onPress, handleRateModal }) => {
   const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
+
+  const handleSharePressed = async () => {
+    try {
+      const result = await Share.share({
+        message: "Link to share with friends",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+        } else {
+          console.log("shared");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log("dismissed");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   return (
     <TouchableOpacity
-      onPress={() => onPress(feature.title)}
+      onPress={() => {
+        if (feature.screen) {
+          onPress(feature.screen);
+        } else if (feature.title === "Share") {
+          handleSharePressed();
+        } else if (feature.title === "Rate") {
+          handleRateModal();
+        }
+      }}
       style={{
         flexDirection: "row",
         justifyContent: "center",
@@ -298,5 +430,7 @@ const RenderFeature = ({ feature, onPress }) => {
     </TouchableOpacity>
   );
 };
+
+// features end
 
 export default Settings;

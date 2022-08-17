@@ -64,9 +64,9 @@ const Contact = ({ contact, themeMode, selectedContact }) => {
       onPress={() => selectedContact(contact)}
       style={{
         flexDirection: "row",
-        marginVertical: 10,
+        paddingVertical: 10,
         alignItems: "center",
-        marginHorizontal: 16
+        marginHorizontal: 16,
       }}
     >
       <View

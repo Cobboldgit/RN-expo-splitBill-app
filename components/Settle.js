@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { useSelector } from "react-redux";
 import { theme } from "../constants";
@@ -8,7 +8,7 @@ const Settle = ({ data, index }) => {
   const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const navigation = useNavigation();
-
+  console.log(data?.photoURL);
   const handlePress = () => {
     navigation.navigate("expenseDetails", { data, index });
   };
@@ -21,7 +21,7 @@ const Settle = ({ data, index }) => {
       : data?.paidBy.contactName;
 
   const rawDate = data?.createdAt;
-  const convertedDate = new Date(rawDate).toLocaleString()
+  const convertedDate = new Date(rawDate).toLocaleString();
   const dateArray = convertedDate.split(" ");
   const month = dateArray[1];
   const day = dateArray[2];
@@ -67,7 +67,18 @@ const Settle = ({ data, index }) => {
           width: 80,
           marginRight: 10,
         }}
-      ></View>
+      >
+        {data?.photoURL != "" && (
+          <Image
+            resizeMode="cover"
+            source={{ uri: data?.photoURL }}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+          />
+        )}
+      </View>
       <View>
         <Text
           style={{

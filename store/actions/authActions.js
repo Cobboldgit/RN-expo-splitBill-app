@@ -2,11 +2,12 @@ export const registerUser = (email, password, fullName, phone) => {
   return (useDispatch, useState, { getFirebase, getFirestore }) => {
     const auth = getFirebase().auth();
     const db = getFirestore();
+    const user = auth.currentUser;
 
     auth
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(() => {
           if (user) {
             user.sendEmailVerification().then((state) => {
               console.log("email verification =>", state);
@@ -18,13 +19,14 @@ export const registerUser = (email, password, fullName, phone) => {
                 displayName: fullName,
                 phoneNumber: phone,
                 email: email,
-                photoUrl: "",
+                photoURL: "",
               })
               .then(() => {
                 user.updateProfile({
                   displayName: fullName,
                   phoneNumber: phone,
-                })
+                  email: email,
+                });
               })
               .catch((error) => {
                 console.log("db =>", error);
@@ -35,6 +37,41 @@ export const registerUser = (email, password, fullName, phone) => {
       .catch((error) => {
         console.log("authError =>", error);
       });
+  };
+};
+
+export const updateProfile = ({
+  displayName,
+  email,
+  phoneNumber,
+  photoURL,
+}) => {
+  return (useDispatch, useState, { getFirebase, getFirestore }) => {
+    const auth = getFirebase().auth();
+    const db = getFirestore();
+    const user = auth.currentUser;
+    const userRef = db.collection("users").doc(auth.currentUser.uid);
+
+    if (user) {
+      userRef
+        .set({
+          displayName: displayName,
+          phoneNumber: phoneNumber,
+          email: email,
+          photoURL: photoURL,
+        })
+        .then(() => {
+          user.updateProfile({
+            displayName: displayName,
+            phoneNumber: phoneNumber,
+            email: email,
+            photoURL: photoURL,
+          });
+        })
+        .catch((error) => {
+          console.log("db => ", error);
+        });
+    }
   };
 };
 
@@ -62,9 +99,3 @@ export const signOut = () => {
       });
   };
 };
-
-
-
-
-
-

@@ -7,8 +7,10 @@ import {
   StatusBar,
   ScrollView,
   Pressable,
+  Modal,
+  Image,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { theme } from "../constants";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -19,20 +21,25 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Chat from "../components/Chat";
 import Button3d from "../components/Button3D";
 import { useEffect } from "react";
-import { getComments } from "../store/actions/appActions";
+import {
+  editExpense,
+  getComments,
+  uploadImage,
+} from "../store/actions/appActions";
+import SelectImage from "../components/SelectImage";
 
 const ExpenseDetails = () => {
   const navigation = useNavigation();
-
   const dispatch = useDispatch();
-
   const { data, index } = useRoute().params;
   const { darkMode, userData } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
 
+  const [showSelectImage, setShowSelectImage] = useState(false);
+  const [pickedImage, setPickedImage] = useState(null);
+
   useEffect(() => {
     const unsubscribe = dispatch(getComments(data.groupId, data.id));
-
     return () => unsubscribe;
   }, []);
 
@@ -50,6 +57,32 @@ const ExpenseDetails = () => {
   const day = dateArray[2];
   const year = dateArray[4];
 
+  const handleEditPressed = () => {};
+  const handleDeletePressed = () => {};
+
+  const handleSelectImage = () => {
+    setShowSelectImage(!showSelectImage);
+  };
+
+  const handleSetPickedImage = async (uri) => {
+    setPickedImage(uri);
+
+    const { url } = await uploadImage(
+      uri,
+      `images/${data.id}`,
+      `${data?.description}-${Date.now()}`
+    );
+
+    console.log(url);
+    // let url = uri
+
+    dispatch(
+      editExpense({ id: data.id, groupId: data.groupId, photoURL: url })
+    );
+
+    alert("done");
+  };
+
   return (
     <View
       style={{
@@ -57,6 +90,17 @@ const ExpenseDetails = () => {
         backgroundColor: themeMode.blueBlack,
       }}
     >
+      <Modal
+        onRequestClose={handleSelectImage}
+        visible={showSelectImage}
+        transparent={true}
+        animationType="slide"
+      >
+        <SelectImage
+          handleSelectImage={handleSelectImage}
+          handleSetPickedImage={handleSetPickedImage}
+        />
+      </Modal>
       {/* header  */}
       <View
         style={{
@@ -87,6 +131,7 @@ const ExpenseDetails = () => {
             }}
           >
             <TouchWithFeed
+              onPress={handleSelectImage}
               flex={{
                 alignItems: "flex-end",
               }}
@@ -96,6 +141,7 @@ const ExpenseDetails = () => {
               }
             />
             <TouchWithFeed
+              onPress={handleDeletePressed}
               flex={{
                 alignItems: "flex-end",
               }}
@@ -105,6 +151,7 @@ const ExpenseDetails = () => {
               }
             />
             <TouchWithFeed
+              onPress={handleEditPressed}
               flex={{
                 alignItems: "flex-end",
               }}
@@ -128,7 +175,13 @@ const ExpenseDetails = () => {
             zIndex: 2,
             left: 60,
           }}
-        ></View>
+        >
+          <Image
+            resizeMode="cover"
+            source={{ uri: pickedImage || data?.photoURL }}
+            style={{ height: "100%", width: "100%" }}
+          />
+        </View>
       </View>
       {/* header end  */}
 

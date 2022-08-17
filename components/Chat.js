@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
+import * as Notification from "expo-notifications";
 import React from "react";
 import {
   Bubble,
@@ -16,6 +17,7 @@ import { auth, db } from "../firebase/firebase";
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
+  const [lastM, setLastM] = useState(null);
 
   const { darkMode, userData, commentsData } = useSelector(
     (state) => state.appReducer
@@ -38,7 +40,6 @@ const Chat = () => {
 
   let room = commentsData;
 
-
   useEffect(() => {
     setMessages([
       {
@@ -53,6 +54,11 @@ const Chat = () => {
       },
     ]);
   }, []);
+
+  // useEffect(() => {
+  //   setLastM(commentsData?.lastMessage);
+  // }, [commentsData]);
+  // console.log("Last message =========>", lastM);
 
   useEffect(() => {
     (async () => {
@@ -69,8 +75,15 @@ const Chat = () => {
               messages: [],
               lastMessage: {},
             })
-            .then(() => {
-              console.log("room created");
+            .then(async () => {
+              await Notification.scheduleNotificationAsync({
+                content: {
+                  title: "Chat room has created successfully",
+                  body: `${auth.currentUser.displayName} has created a chat room for ${expenseData?.description}`,
+                  data: { data: "goes here" },
+                },
+                trigger: { seconds: 1 },
+              });
             })
             .catch((error) => {
               console.log(error.message);
@@ -98,7 +111,7 @@ const Chat = () => {
   const onSend = async (messages = []) => {
     appendMessages(messages);
     const { _id, createdAt, text, user } = messages[messages.length - 1];
-    dispatch(
+    await dispatch(
       sendMessage({
         _id,
         createdAt: new Date(),
@@ -108,6 +121,16 @@ const Chat = () => {
         roomId: expenseData.id,
       })
     );
+
+    // await Notification.scheduleNotificationAsync({
+    //   content: {
+    //     title: "New message from " + userData?.displayName,
+    //     body: text,
+    //     data: { data: "goes here" },
+    //   },
+    //   trigger: { seconds: 1 },
+
+    // });
   };
 
   const customInputToolbar = (props) => {

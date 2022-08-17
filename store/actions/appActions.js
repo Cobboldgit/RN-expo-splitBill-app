@@ -3,7 +3,40 @@ import { storage } from "../../firebase/firebase";
 import firebase from "../../firebase/firebase";
 
 // ==============================================
-// =              clear participant            =
+// =              rate info                    =
+//=============================================
+
+export const setRateInfo = (data) => {
+  return {
+    type: "SET_RATEINFO",
+    payload: data,
+  };
+};
+
+// ==============================================
+// =              data from part               =
+//=============================================
+
+export const setDataFromAddParticipant = (data) => {
+  return {
+    type: "SET_DATAFROMADDPARTICIPANT",
+    payload: data,
+  };
+};
+
+// ==============================================
+// =              data from edit group name    =
+//=============================================
+
+export const setDataFromEditGroupName = (data) => {
+  return {
+    type: "SET_DATAFROMEDITGROUPNAME",
+    payload: data,
+  };
+};
+
+// ==============================================
+// =              equal split                  =
 //=============================================
 
 export const setEqualSplit = (state) => {
@@ -224,7 +257,7 @@ export const editGroup = (data) => {
     const user = getFirebase().auth().currentUser;
     const db = getFirestore();
 
-    const { newGroupData, participants, groupId, photoURL } = data;
+    const { groupName, participants, groupId, photoURL } = data;
 
     const dbRef = db.collection("users").doc(user.uid);
 
@@ -232,8 +265,8 @@ export const editGroup = (data) => {
       .collection("groups")
       .doc(groupId)
       .update({
-        groupName: newGroupData.groupName,
-        photoURL: photoURL,
+        groupName,
+        photoURL,
         participants: getFirestore().FieldValue.arrayUnion(...participants),
       })
       .then((result) => {
@@ -278,6 +311,40 @@ export const createExpense = (data) => {
 };
 
 // ==============================================
+// =              edit expense                  =
+//==============================================
+
+export const editExpense = (data) => {
+  return (dispatch, useState, { getFirestore, getFirebase }) => {
+    const user = getFirebase().auth().currentUser;
+    const db = getFirestore();
+    const groups = useState().appReducer.groupsData;
+
+    const expense = groups.map((item) => {
+      const expense = item.expenses.find((e) => e.id === data.id);
+      return expense;
+    });
+
+    if (data.photoURL != undefined && data.photoURL != null)
+      expense[0].photoURL = data.photoURL;
+
+    // const updateData = groups.map((item) => {
+    //   if (data.groupId === item.id) {
+    //     return expense[0];
+    //   }
+    //   return item;
+    // })
+
+    // console.log(updateData);
+
+    const dbRef = db.collection("users").doc(user.uid);
+    dbRef.collection("groups").doc(data.groupId).update({
+      expenses: expense,
+    });
+  };
+};
+
+// ==============================================
 // =              send a comment               =
 //==============================================
 
@@ -311,20 +378,27 @@ export const getComments = (groupId, roomId) => {
     const commentsRef = groupRef.collection("comments").doc(roomId);
 
     commentsRef.onSnapshot((snapshot) => {
-      const comments = snapshot.data().messages.map((message) => {
+      const comments = snapshot.data()?.messages.map((message) => {
         return {
           ...message,
           createdAt: message.createdAt.toDate(),
         };
       });
 
-      dispatch({
-        type: "GET_COMMENTS",
-        payload: {
-          lastMessage: snapshot.data().lastMessage,
-          messages: comments,
-        },
-      });
+      if (comments) {
+        dispatch({
+          type: "GET_COMMENTS",
+          payload: {
+            lastMessage: snapshot.data().lastMessage,
+            messages: comments,
+          },
+        });
+      } else {
+        dispatch({
+          type: "GET_COMMENTS",
+          payload: null,
+        });
+      }
     });
   };
 };

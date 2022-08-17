@@ -3,17 +3,16 @@ import {
   Text,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import React from "react";
 import { theme } from "../constants";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  askForCameraPermission,
-  pickImage,
-} from "../store/actions/appActions";
+import { askForCameraPermission, pickImage } from "../store/actions/appActions";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 const SelectImage = ({ handleSelectImage, handleSetPickedImage }) => {
   const dispatch = useDispatch();
@@ -31,8 +30,8 @@ const SelectImage = ({ handleSelectImage, handleSetPickedImage }) => {
   const handlAddProfilePicture = async (type) => {
     const result = await pickImage(type);
     if (!result?.cancelled) {
-      handleSetPickedImage(result.uri)
-      handleSelectImage()
+      handleSetPickedImage(result.uri);
+      handleSelectImage();
     }
     if (!camPermission) {
       return (
@@ -64,18 +63,19 @@ const SelectImage = ({ handleSelectImage, handleSetPickedImage }) => {
 
   return (
     <TouchableWithoutFeedback onPress={handleSelectImage}>
-      <View
+      <LinearGradient
+      colors={[`rgba(0,0,0,0.3)`, `rgba(0,0,0,0.8)`]}
         style={{
           flex: 1,
-          backgroundColor: darkMode ? `rgba(0,0,0,0.8)` : `rgba(0,0,0,0.5)`,
+          justifyContent: 'flex-end'
         }}
       >
-        <View style={{ flex: 1 }}></View>
-        <View
+        <LinearGradient
+          colors={[themeMode.pinkLight, themeMode.pinkLighter]}
           style={{
-            backgroundColor: themeMode.blueBlack,
-            flex: 1,
-            borderRadius: 30,
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
+            height: Dimensions.get("screen").height / 3,
           }}
         >
           <View
@@ -90,16 +90,6 @@ const SelectImage = ({ handleSelectImage, handleSetPickedImage }) => {
             <TouchableOpacity onPress={handleSelectImage}>
               <Ionicons name="close" size={30} color={themeMode.white} />
             </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 20,
-                fontFamily: "Inter_400Regular",
-                color: themeMode.white,
-                marginLeft: 30,
-              }}
-            >
-              Select file
-            </Text>
           </View>
           <View
             style={{
@@ -156,8 +146,8 @@ const SelectImage = ({ handleSelectImage, handleSetPickedImage }) => {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+        </LinearGradient>
+      </LinearGradient>
     </TouchableWithoutFeedback>
   );
 };

@@ -7,7 +7,10 @@ const initialState = {
   selectedPaidBy: null,
   split: null,
   equalSplit: true,
-  commentsData: null
+  commentsData: null,
+  dataFromEditGroupName: null,
+  dataFromAddParticipant: [],
+  rateInfo: null,
 };
 
 export default (state = initialState, { type, payload }) => {
@@ -30,8 +33,14 @@ export default (state = initialState, { type, payload }) => {
       return { ...state, split: payload };
     case "SET_EQUAL_SPLIT":
       return { ...state, equalSplit: payload };
-    case 'GET_COMMENTS': 
-      return {...state, commentsData: payload}
+    case "GET_COMMENTS":
+      return { ...state, commentsData: payload };
+    case "SET_DATAFROMEDITGROUPNAME":
+      return { ...state, dataFromEditGroupName: payload };
+    case "SET_DATAFROMADDPARTICIPANT":
+      return { ...state, dataFromAddParticipant: payload };
+    case 'SET_RATEINFO':
+      return {...state, rateInfo: payload}
     default:
       return state;
   }

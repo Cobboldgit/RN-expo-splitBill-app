@@ -24,6 +24,13 @@ import PaidBy from "../screens/PaidBy";
 import SplitProportion from "../screens/SplitProportion";
 import LetsSplit from "../screens/LetsSplit";
 import Comment from "../screens/Comment";
+import EditGroupName from "../screens/EditGroupName";
+import AddParticipant from "../screens/AddParticipant";
+import Theme from "../screens/Theme";
+import Passcode from "../screens/Passcode";
+import FandQ from "../screens/FandQ";
+import ContactOrSupport from "../screens/ContactOrSupport";
+import ProfilePicture from "../screens/ProfilePicture";
 
 const Stack = createNativeStackNavigator();
 
@@ -99,6 +106,13 @@ const Screen = () => {
           <Stack.Screen name="splitProportion" component={SplitProportion} />
           <Stack.Screen name="letsSplit" component={LetsSplit} />
           <Stack.Screen name="comment" component={Comment} />
+          <Stack.Screen name="editGroupName" component={EditGroupName} />
+          <Stack.Screen name="addParticipant" component={AddParticipant} />
+          <Stack.Screen name="theme" component={Theme} />
+          <Stack.Screen name="passcode" component={Passcode} />
+          <Stack.Screen name="faq" component={FandQ} />
+          <Stack.Screen name="contactOrSupport" component={ContactOrSupport} />
+          <Stack.Screen name="profile" component={ProfilePicture} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

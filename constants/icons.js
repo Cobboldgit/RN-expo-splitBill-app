@@ -1,4 +1,10 @@
+const path = "../assets/icons/";
+
 export default {
-    tabBarAdd: require("../assets/icons/tabadd.png"),
-    loader: require("../assets/icons/loadingIcon.json"),
-}
+  tabBarAdd: require(path + "tabadd.png"),
+  loader: require(path + "loadingIcon.json"),
+  good: require(path + "smile.png"),
+  bad: require(path + "sad.png"),
+  okay: require(path + "somehow.png"),
+  great: require(path + "happy.png"),
+};

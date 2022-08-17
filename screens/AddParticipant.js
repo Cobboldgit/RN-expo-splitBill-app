@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  StatusBar,
 } from "react-native";
 import React, { useState, useEffect, Fragment } from "react";
 import { theme } from "../constants";
@@ -17,19 +18,22 @@ import {useContacts} from "../hooks";
 import CreateContact from "./CreateContact";
 import TouchWithFeed from "../components/TouchWithFeed";
 import ListSelectedContacts from "../components/ListSelectedContacts";
-import { checkIfMemberExist } from "../store/actions/appActions";
+import { checkIfMemberExist, setDataFromAddParticipant } from "../store/actions/appActions";
+import { useNavigation } from "@react-navigation/native";
 
 const AddParticipant = ({ modalVisible, handleModalVisible }) => {
   const contacts = useContacts();
   const [search, setSearch] = useState("");
   const [filteredContacts, setFilteredContacts] = useState(contacts);
-  const { darkMode } = useSelector((state) => state.appReducer);
+  const { darkMode, dataFromAddParticipant } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const [showCreateContactModal, setShowCreateContactModal] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const dispatch = useDispatch();
+  const navigation = useNavigation()
 
   useEffect(() => {
+    setSelectedContacts([...dataFromAddParticipant])
     setFilteredContacts(contacts);
   }, []);
 
@@ -71,8 +75,13 @@ const AddParticipant = ({ modalVisible, handleModalVisible }) => {
   };
 
   const handleSubmit = () => {
-    handleModalVisible(selectedContacts);
+    dispatch(setDataFromAddParticipant(selectedContacts))
+    handleGoBack()
   };
+
+  const handleGoBack = () => {
+    navigation.goBack()
+  }
 
   // top component
   const listHeaderComponent = () => {
@@ -203,17 +212,18 @@ const AddParticipant = ({ modalVisible, handleModalVisible }) => {
       />
       {/* create contact end*/}
 
-      {/* main modal  */}
-      <Modal
+      {/* main start  */}
+      {/* <Modal
         visible={modalVisible}
         onRequestClose={handleModalVisible}
         transparent={true}
         animationType="slide"
-      >
+      > */}
         <View
           style={{
             flex: 1,
             backgroundColor: themeMode.blueBlack,
+            paddingTop: StatusBar.currentHeight
           }}
         >
           <TouchableOpacity
@@ -251,12 +261,12 @@ const AddParticipant = ({ modalVisible, handleModalVisible }) => {
               }}
             >
               <TouchWithFeed
-                onPress={handleModalVisible}
+                onPress={handleGoBack}
                 size={{
                   width: undefined,
                 }}
                 icon={
-                  <AntDesign name="down" size={24} color={themeMode.white} />
+                  <AntDesign name='left' size={24} color={themeMode.white} />
                 }
               />
             </View>
@@ -289,8 +299,8 @@ const AddParticipant = ({ modalVisible, handleModalVisible }) => {
           </View>
           {/* list end  */}
         </View>
-      </Modal>
-      {/* main modal end  */}
+      {/* </Modal> */}
+      {/* main end  */}
     </Fragment>
   );
 };

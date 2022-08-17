@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import React from "react";
 import { useSelector } from "react-redux";
 import { theme } from "../constants";
@@ -41,7 +41,13 @@ const OweDraw = ({data}) => {
             left: -25,
             top: -15,
           }}
-        ></View>
+        >
+          <Image source={{uri: userData?.photoUrl}} style={{
+            height: '100%',
+            width: '100%',
+            borderRadius: 50,
+          }}/>
+        </View>
         <Text
           style={{
             fontSize: 18,

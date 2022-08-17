@@ -74,6 +74,7 @@ const Home = () => {
         paddingHorizontal: 16,
       }}
     >
+    
       {/* <Loader state={false}/> */}
       <ScrollView
         refreshControl={
@@ -107,7 +108,12 @@ const Home = () => {
               height: "100%",
             }}
           >
-            <Avatar uri={userData?.photoURL} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('profile')}
+              activeOpacity={0.6}
+            >
+              <Avatar uri={userData?.photoUrl} />
+            </TouchableOpacity>
             <Text
               style={{
                 fontFamily: "Inter_400Regular",

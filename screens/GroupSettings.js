@@ -17,9 +17,11 @@ import {
   addParticipant,
   clearParticipants,
   editGroup,
+  setDataFromAddParticipant,
+  setDataFromEditGroupName,
   uploadImage,
 } from "../store/actions/appActions";
-import EditGroup from "./EditGroup";
+
 import { useState } from "react";
 import { useEffect } from "react";
 import AddParticipant from "./AddParticipant";
@@ -30,12 +32,16 @@ import PartticipantCard from "../components/PartticipantCard";
 const GroupSettings = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showPartModal, setShowPartModal] = useState(false);
-  const [selectedContacts, setSelectedContacts] = useState([]);
-  const [newGroupData, setNewGroupData] = useState(null);
+  // const [dataFromAddParticipant, setdataFromAddParticipant] = useState([]);
   const navigation = useNavigation();
   const group = useRoute().params.group;
   const dispatch = useDispatch();
-  const { darkMode, participants } = useSelector((state) => state.appReducer);
+  const {
+    darkMode,
+    participants,
+    dataFromEditGroupName,
+    dataFromAddParticipant,
+  } = useSelector((state) => state.appReducer);
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
 
   useEffect(() => {
@@ -46,57 +52,60 @@ const GroupSettings = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedContacts.length > 0) {
-      selectedContacts.forEach((contact) => {
+    if (dataFromAddParticipant.length > 0) {
+      dataFromAddParticipant.forEach((contact) => {
         dispatch(addParticipant(contact));
       });
-      // setSelectedContacts([]);
+      // setdataFromAddParticipant([]);
     }
-  }, [selectedContacts]);
-
-  const handleEditGroup = (data) => {
-    setNewGroupData(data);
-    handleEditModalVisible();
-  };
+  }, [dataFromAddParticipant]);
 
   const handleSubmit = async () => {
     const user = auth.currentUser;
 
     let photoURL;
 
-    if (newGroupData && newGroupData.photoURL) {
+    if (dataFromEditGroupName && dataFromEditGroupName.photoURL) {
       const { url } = await uploadImage(
-        newGroupData.photoURL,
+        dataFromEditGroupName.photoURL,
         `images/${user.uid}`,
-        `${newGroupData.groupName}`
+        `${dataFromEditGroupName.groupName}`
       );
       photoURL = url;
     }
 
     const data = {
-      newGroupData,
+      groupName: dataFromEditGroupName && dataFromEditGroupName.groupName
+        ? dataFromEditGroupName?.groupName
+        : group?.groupName,
       participants,
       groupId: group.id,
       photoURL: photoURL ? photoURL : group?.photoURL,
     };
 
     // if (photoURL) {
-    //   data.newGroupData.photoURL = photoURL;
+    //   data.dataFromEditGroupName.photoURL = photoURL;
     // }
 
     await dispatch(editGroup(data));
+    dispatch(setDataFromEditGroupName(null))
+    dispatch(setDataFromAddParticipant([]))
     navigation.goBack();
   };
 
-  const handleEditModalVisible = () => {
-    setShowEditModal(!showEditModal);
+  const handleEditGroupName = () => {
+    navigation.navigate("editGroupName", {
+      photoURL: group?.photoURL,
+      groupName: group?.groupName,
+    });
   };
 
-  const handleEditPartModalVisible = (selectedContacts) => {
-    if (selectedContacts) {
-      setSelectedContacts(selectedContacts);
-    }
-    setShowPartModal(!showPartModal);
+  const handleAddPeopleToGroup = () => {
+    // if (dataFromAddParticipant) {
+    //   setdataFromAddParticipant(dataFromAddParticipant);
+    // }
+    // setShowPartModal(!showPartModal);
+    navigation.navigate("addParticipant");
   };
 
   return (
@@ -107,18 +116,10 @@ const GroupSettings = () => {
         paddingTop: StatusBar.currentHeight,
       }}
     >
-      <EditGroup
-        photoURL={group?.photoURL}
-        groupName={group?.groupName}
-        modalVisible={showEditModal}
-        handleModalVisible={handleEditModalVisible}
-        onDone={handleEditGroup}
-      />
-
-      <AddParticipant
+      {/* <AddParticipant
         modalVisible={showPartModal}
-        handleModalVisible={handleEditPartModalVisible}
-      />
+        handleModalVisible={handleAddPeopleToGroup}
+      /> */}
 
       {/* header  */}
       <View
@@ -191,7 +192,7 @@ const GroupSettings = () => {
       >
         {/* edit group name  */}
         <TouchableOpacity
-          onPress={handleEditModalVisible}
+          onPress={handleEditGroupName}
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -204,7 +205,9 @@ const GroupSettings = () => {
               alignItems: "center",
             }}
           >
-            <SquareImage url={newGroupData?.photoURL || group?.photoURL} />
+            <SquareImage
+              url={dataFromEditGroupName?.photoURL || group?.photoURL}
+            />
             <View style={{}}>
               <View
                 style={{
@@ -221,27 +224,28 @@ const GroupSettings = () => {
                 >
                   {group?.groupName}
                 </Text>
-                {newGroupData && newGroupData?.groupName !== group?.groupName && (
-                  <Fragment>
-                    <View
-                      style={{
-                        width: 25,
-                        height: 2,
-                        backgroundColor: themeMode.blueLighter,
-                        marginHorizontal: 5,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        fontFamily: "Inter_400Regular",
-                        color: themeMode.blueLighter,
-                        fontSize: 16,
-                      }}
-                    >
-                      {newGroupData?.groupName}
-                    </Text>
-                  </Fragment>
-                )}
+                {dataFromEditGroupName &&
+                  dataFromEditGroupName?.groupName !== group?.groupName && (
+                    <Fragment>
+                      <View
+                        style={{
+                          width: 25,
+                          height: 2,
+                          backgroundColor: themeMode.blueLighter,
+                          marginHorizontal: 5,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          fontFamily: "Inter_400Regular",
+                          color: themeMode.blueLighter,
+                          fontSize: 16,
+                        }}
+                      >
+                        {dataFromEditGroupName?.groupName}
+                      </Text>
+                    </Fragment>
+                  )}
               </View>
               <View
                 style={{
@@ -298,7 +302,7 @@ const GroupSettings = () => {
 
         {/* add people  */}
         <TouchableOpacity
-          onPress={handleEditPartModalVisible}
+          onPress={handleAddPeopleToGroup}
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -321,8 +325,8 @@ const GroupSettings = () => {
 
         {/* list new participants  */}
 
-        {selectedContacts.length > 0 &&
-          selectedContacts.map((item, index) => {
+        {dataFromAddParticipant.length > 0 &&
+          dataFromAddParticipant.map((item, index) => {
             return <PartticipantCard key={index} item={item} edit={true} />;
           })}
 

@@ -36,20 +36,39 @@ const GroupDetails = () => {
     ?.reduce((a, b) => a + b.amount, 0)
     .toFixed(2);
 
-  const whoOweYou = group?.expenses.map((expense) => {
-    let length = 0;
-    let amount, name;
-    if (expense.equal === true) {
-      amount = parseFloat(expense.amountPerPerson).toFixed(2);
-      name = expense.paidFor[0].contactName;
-    } else {
-      amount = expense.paidFor[0].amount;
-      name = expense.paidFor[0].contactName;
+  const calcWhoOweYou = () => {
+    let amount = 0,
+      name,
+      person = [],
+      userOwe = 0;
+    for (let i = 0; i < group?.expenses.length; i++) {
+      const expense = group?.expenses[i];
+      for (let j = 0; j < expense?.paidFor.length; j++) {
+        const paidFor = expense?.paidFor[1];
+        name = paidFor?.contactName;
+        person.indexOf(expense?.paidFor[j].contactName) === -1
+          ? person.push(expense?.paidFor[j].contactName)
+          : null;
+        if (paidFor.phoneNumber === expense.paidFor[j].phoneNumber) {
+          if (expense.equal === true) {
+            amount = amount + parseFloat(expense.amountPerPerson);
+          } else {
+            const findPaidFor = expense.paidFor.find(
+              (person) => person.phoneNumber === paidFor.phoneNumber
+            );
+            amount = amount + parseFloat(findPaidFor.amount);
+          }
+        }
+      }
     }
-
-    length = length + expense.paidFor.length;
-    return { name, amount, length };
-  });
+    return {
+      amount: amount.toFixed(2),
+      name,
+      person,
+      length: person.length,
+      userOwe,
+    };
+  };
 
 
   useEffect(() => {
@@ -199,7 +218,7 @@ const GroupDetails = () => {
               marginRight: 5,
             }}
           >
-            You are owed
+            Total expense is
           </Text>
           <Text
             style={{
@@ -211,10 +230,20 @@ const GroupDetails = () => {
           >
             Ghc {youAreOwed}
           </Text>
+          <Text
+            style={{
+              color: themeMode.pinkLight,
+              fontSize: 16,
+              fontFamily: "Inter_400Regular",
+              marginRight: 5,
+            }}
+          >
+            including yours
+          </Text>
         </View>
 
         {/* line 3 */}
-        {whoOweYou.length > 0 && (
+        {calcWhoOweYou().length > 0 && (
           <View
             style={{
               flexDirection: "row",
@@ -230,7 +259,7 @@ const GroupDetails = () => {
                 marginRight: 5,
               }}
             >
-              {whoOweYou[0]?.name} owes
+              {calcWhoOweYou().name} owes
             </Text>
             <Text
               style={{
@@ -239,7 +268,7 @@ const GroupDetails = () => {
                 fontSize: 16,
               }}
             >
-              Ghc {whoOweYou[0]?.amount}
+              Ghc {calcWhoOweYou().amount}
             </Text>
           </View>
         )}
@@ -254,7 +283,7 @@ const GroupDetails = () => {
             marginBottom: 10,
           }}
         >
-          Plus {numberOfPeopleWhoOwe} others
+          Plus {calcWhoOweYou().length - 1} others
         </Text>
       </View>
       {/* description end */}

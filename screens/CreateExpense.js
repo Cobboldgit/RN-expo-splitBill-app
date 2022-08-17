@@ -16,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import TouchWithFeed from "../components/TouchWithFeed";
 import {
   createExpense,
+  setEqualSplit,
   setShowModal,
   updateSplit,
 } from "../store/actions/appActions";
@@ -78,6 +79,8 @@ const CreateExpense = () => {
     };
 
     dispatch(createExpense(data));
+    dispatch(setEqualSplit(true))
+    dispatch(updateSplit(null))
     navigation.goBack();
   };
 

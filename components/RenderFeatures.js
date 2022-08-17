@@ -1,28 +1,29 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 
 const RenderFeatures = ({ themeMode, onPress }) => {
   const features = [
     {
       title: "Groups",
-      icon: "",
-      screen: 'groups'
+      icon: <FontAwesome name="group" size={24} color={themeMode.blueBlack} />,
+      screen: "groups",
     },
     {
       title: "Expenses",
-      icon: "",
-      screen: 'expenses'
+      icon: <FontAwesome name="dollar" size={24} color={themeMode.blueBlack} />,
+      screen: "expenses",
     },
     {
       title: "Friends",
-      icon: "",
-      screen: 'friends'
+      icon: <Ionicons name="person" size={24} color={themeMode.blueBlack} />,
+      screen: "friends",
     },
     {
       title: "Splits",
-      icon: "",
-      screen: 'splits'
+      icon: <FontAwesome name="cut" size={24} color={themeMode.blueBlack} />,
+      screen: "splits",
     },
   ];
 
@@ -52,9 +53,11 @@ const RenderItems = ({ item, themeMode, onPress }) => {
           height: 60,
           width: 60,
           borderRadius: 20,
+          justifyContent: 'center',
+          alignItems: 'center'
         }}
       >
-        <Image />
+        {item.icon}
       </LinearGradient>
       <Text
         style={{

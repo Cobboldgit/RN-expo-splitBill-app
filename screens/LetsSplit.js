@@ -13,8 +13,6 @@ const LetsSplit = () => {
   const themeMode = darkMode ? theme.darkTheme : theme.lightTheme;
   const { data } = useRoute().params;
 
-  console.log(data);
-
   return (
     <View
       style={{
